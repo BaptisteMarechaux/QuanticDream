@@ -1,18 +1,27 @@
 // Déclaration d'un troupeau de particules
 Flock flock;
 
+
+color red = color(255,0,0);
+color green = color(0,255, 0);
+color blue = color(0,0,255);
+
+color from = color(0,0,0);
+color to = blue;
+
 void setup()
 {
   // Définition de la taille de la fenêtre
   size(800, 600);
   // Instanciation d'un nouveau troupeau
   flock = new Flock();
-  
+
   // Ajout de 80 particules dans le troupeau
   for (int i = 0; i < 80; i++)
   {
     flock.addBoid(new Boid(width/2,height/2));
   }
+  
 }
 
 void draw()
@@ -26,6 +35,19 @@ void draw()
   
   // Mouvement du troupeau
   flock.run();
+  
+  if(frameCount%100 == 0)
+  {
+    from = to;
+    /*int rand = int(random(1,4));
+    if(rand == 1)
+      to = blue;
+    else if(rand == 2)
+      to = red;
+    else if(rand == 3)
+      to = green;*/
+    to = color(random(0,256),random(0,256),random(0,256));
+  }
   // Parcours des particules
   for (int i = 0; i < flock.boids.size()-1; i++)
   {
@@ -40,7 +62,12 @@ void draw()
       {
         // ... on trace un trait
         line(p1.x, p1.y, p2.x, p2.y);
-        stroke(random(1,255),random(1,255),random(1,255));
+        int neon;
+        color neonColor;
+        
+        neonColor = lerpColor(from, to, float(frameCount%100) / 100.0f);
+        stroke(neonColor,170);
+        
       }
     }
   }
@@ -186,7 +213,8 @@ class Boid
     pushMatrix();  // ?
     translate(location.x, location.y);
     // Création d'un cercle
-    ellipse(0, 0, 5, 5);
+    ellipse(0, 0, 15, 15);
+    fill(0,0,0);
     popMatrix();  // ?
   }
 
