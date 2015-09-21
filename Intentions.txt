@@ -1,0 +1,21 @@
+Ce qu'on rajoute:
+
+De la couleur
+Random Direction
+Remplacer les ronds par une autre forme
+
+Intentions: - Partir de formes simples
+	- Travailler la granularité
+	- Ne pas avoir trop d'aléatoire mais garder une cohérence
+	- Reprenseter des liens entre les différentes éléments
+	- Travailler sur la contrainte de l'écran
+	- Travailler sur l'aspect animal
+	- Obeserver au final le developpement de particules élémentaires
+
+Inspirations: - Mouvements des oiseaux (flock)
+	- Mouvement des fantômes
+	- Connection dans un réseau (network)
+
+Outils: - Processing
+	- Librairie graphique pour travailler sur les effets de transparences
+	- 
