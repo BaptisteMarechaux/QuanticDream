@@ -39,13 +39,6 @@ void draw()
   if(frameCount%100 == 0)
   {
     from = to;
-    /*int rand = int(random(1,4));
-    if(rand == 1)
-      to = blue;
-    else if(rand == 2)
-      to = red;
-    else if(rand == 3)
-      to = green;*/
     to = color(random(0,256),random(0,256),random(0,256));
   }
   // Parcours des particules
@@ -62,12 +55,10 @@ void draw()
       {
         // ... on trace un trait
         line(p1.x, p1.y, p2.x, p2.y);
-        int neon;
         color neonColor;
         
         neonColor = lerpColor(from, to, float(frameCount%100) / 100.0f);
         stroke(neonColor,170);
-        
       }
     }
   }
@@ -136,7 +127,7 @@ class Boid
     location = new PVector(x, y);
     // Définition des variables
     r = 2.0;
-    maxspeed = 2;
+    maxspeed = 2.5f;
     maxforce = 0.03;
   }
 
@@ -164,8 +155,8 @@ class Boid
     PVector coh = cohesion(boids);   // Cohesion
     // Multiplication arbitraire des forces
     sep.mult(1.5);
-    ali.mult(1.0);
-    coh.mult(1.0);
+    ali.mult(1.4);
+    coh.mult(0.7);
     // Ajout des vecteurs de force à l'accéleration
     applyForce(sep);
     applyForce(ali);
@@ -213,7 +204,14 @@ class Boid
     pushMatrix();  // ?
     translate(location.x, location.y);
     // Création d'un cercle
-    ellipse(0, 0, 15, 15);
+    int rand = int(random(1,4));
+    if(rand == 1)
+      ellipse(0, 0, random(5,10), random(5,10));
+    else if(rand == 2)
+       triangle(0, 0, 0, random(5,10), random(5,10), random(5,10));
+    else
+       rect(0, 0, 0, 0, random(5,10), random(5,10), random(5,10), random(5,10));
+    
     fill(0,0,0);
     popMatrix();  // ?
   }
@@ -230,7 +228,7 @@ class Boid
   // Méthode d'évitement des particules entre elles
   PVector separate (ArrayList<Boid> boids)
   {
-    float desiredseparation = 25.0f;
+    float desiredseparation = 35.0f;
     PVector steer = new PVector(0, 0, 0);
     int count = 0;
     // Pour chaque particule ...
@@ -274,7 +272,7 @@ class Boid
   // Méthode d'alignement des particules et d'homogénisation de la vitesse
   PVector align (ArrayList<Boid> boids)
   {
-    float neighbordist = 50;
+    float neighbordist = 40;
     PVector sum = new PVector(0, 0);
     int count = 0;
     for (Boid other : boids)
@@ -309,7 +307,7 @@ class Boid
   // Méthode de cohésion du troupeau selon la position moyenne
   PVector cohesion (ArrayList<Boid> boids)
   {
-    float neighbordist = 50;
+    float neighbordist = 35;
     // On commence avec un vecteur vide puis on y ajoute toutes les positions
     PVector sum = new PVector(0, 0);
     int count = 0;
