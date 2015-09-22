@@ -1,6 +1,5 @@
-// Déclaration d'un troupeau de particules
+// DÃ©claration d'un troupeau de particules
 Flock flock;
-
 
 color red = color(255,0,0);
 color green = color(0,255, 0);
@@ -9,15 +8,16 @@ color blue = color(0,0,255);
 color from = color(0,0,0);
 color to = blue;
 
-float backR = random(128, 255);
-float backG = random(128, 255);
-float backB = random(128, 255);
-  
-float randI;
+color backFrom = color(0,0,0);
+color backTo = color(0,0,0);
+
+color back = color(0,0,0);
+
+color neonColor;
 
 void setup()
 {
-  // Définition de la taille de la fenêtre
+  // DÃ©finition de la taille de la fenÃªtre
   size(800, 600);
   // Instanciation d'un nouveau troupeau
   flock = new Flock();
@@ -28,11 +28,7 @@ void setup()
     flock.addBoid(new Boid(width/2,height/2));
   }
   
-  backR = random(128, 255);
-  backG = random(128, 255);
-  backB = random(128, 255);
-  
-  randI = random(0,1);
+
   
 }
 
@@ -40,10 +36,15 @@ void draw()
 {
   // Couleur du fond
   //background(255);
-  // Tracé persistent de chaque objet dessiné
-  
-  randI +=0.1;
-  fill(backR+50*cos(randI), backG+50*cos(randI), backB+50*cos(randI), 5);
+  // TracÃ© persistent de chaque objet dessinÃ©
+
+  if(frameCount%60 == 0)
+  {
+    backFrom = to;
+    backTo = color(random(0,256),random(0,256),random(0,256));
+  }
+  back = lerpColor(from, to, float(frameCount%100) / 100.0f);
+  fill(back, 2);
   // Remplissage du fond
   rect(0, 0, width, height);
   
@@ -64,13 +65,11 @@ void draw()
     {
       // ... et on parcourt toutes les autres
       PVector p2 = flock.boids.get(j).location;
-      // Si la distance entre les deux particules ciblées est inférieure à 50 ...
+      // Si la distance entre les deux particules ciblÃ©es est infÃ©rieure Ã  50 ...
       if (dist(p1.x, p1.y, p2.x, p2.y)<50)
       {
         // ... on trace un trait
-        line(p1.x, p1.y, p2.x, p2.y);
-        color neonColor;
-        
+        line(p1.x, p1.y, p2.x, p2.y);        
         neonColor = lerpColor(from, to, float(frameCount%100) / 100.0f);
         stroke(neonColor,170);
       }
@@ -103,7 +102,7 @@ class Flock
     // Pour chaque particule ...
     for (Boid b : boids)
     {
-      // ... on déclenche son mouvement en lui donnant toute la liste de particules
+      // ... on dÃ©clenche son mouvement en lui donnant toute la liste de particules
       b.run(boids);
     }
   }
@@ -120,7 +119,7 @@ class Boid
 {
   PVector location;  // Position de la particule
   PVector velocity;  // Vecteur directionnel de la particule
-  PVector acceleration;  // Accélération de la particule
+  PVector acceleration;  // AccÃ©lÃ©ration de la particule
   float r;  
   float maxforce;    // Force de direction maximale
   float maxspeed;    // Vitesse maximale
@@ -139,13 +138,13 @@ class Boid
 
     // Position de la particule
     location = new PVector(x, y);
-    // Définition des variables
+    // DÃ©finition des variables
     r = 2.0;
     maxspeed = 2.5f;
     maxforce = 0.03;
   }
 
-  // Méthode d'envol de la particule
+  // MÃ©thode d'envol de la particule
   void run(ArrayList<Boid> boids)
   {
     flock(boids);
@@ -154,14 +153,14 @@ class Boid
     render();
   }
 
-  // Méthode d'application d'une force
+  // MÃ©thode d'application d'une force
   void applyForce(PVector force)
   {
     // On pourrait ajouter la masse ici
     acceleration.add(force);
   }
 
-  // On ajoute une nouvelle accéleration à chaque appel selon trois critères
+  // On ajoute une nouvelle accÃ©leration Ã  chaque appel selon trois critÃ¨res
   void flock(ArrayList<Boid> boids)
   {
     PVector sep = separate(boids);   // Separation
@@ -171,31 +170,31 @@ class Boid
     sep.mult(1.5);
     //ali.mult(1.4);
     //coh.mult(0.7);
-    // Ajout des vecteurs de force à l'accéleration
+    // Ajout des vecteurs de force Ã  l'accÃ©leration
     applyForce(sep);
     //applyForce(ali);
     //applyForce(coh);
   }
 
-  // Méthode de mise à jour de la position de la particule
+  // MÃ©thode de mise Ã  jour de la position de la particule
   void update()
   {
-    //Mise à jour de la direction
+    //Mise Ã  jour de la direction
     velocity.add(acceleration);
     // Limite de la vitesse
     velocity.limit(maxspeed);
     location.add(velocity);
-    // Reset de l'accélération à 0 à chaque cycle
+    // Reset de l'accÃ©lÃ©ration Ã  0 Ã  chaque cycle
     acceleration.mult(0);
   }
 
-  // Méthode qui calcule et applique une force de direction vers une cible
+  // MÃ©thode qui calcule et applique une force de direction vers une cible
   // STEER = DESIRED MINUS VELOCITY
   PVector seek(PVector target)
   {
-    // Vecteur qui pointe de la position de la particule à la position ciblée
+    // Vecteur qui pointe de la position de la particule Ã  la position ciblÃ©e
     PVector desired = PVector.sub(target, location);
-    // Mise à l'échelle de la vitesse maximale
+    // Mise Ã  l'Ã©chelle de la vitesse maximale
     desired.normalize();
     desired.mult(maxspeed);
 
@@ -217,10 +216,10 @@ class Boid
     
     pushMatrix();  // ?
     translate(location.x, location.y);
-    // Création d'un cercle
+    // CrÃ©ation d'un cercle
     int rand = int(random(1,4));
-    stroke(255, 255, 255);
-    fill(255, 255, 255);
+    stroke(neonColor);
+    fill(neonColor);
     if(rand == 1)
       ellipse(0, 0, random(5,10), random(5,10));
     else if(rand == 2)
@@ -232,7 +231,7 @@ class Boid
     popMatrix();  // ?
   }
 
-  // Quand une particule sort d'un côté de l'écran, elle revient du côté opposé
+  // Quand une particule sort d'un cÃ´tÃ© de l'Ã©cran, elle revient du cÃ´tÃ© opposÃ©
   void borders()
   {
     if (location.x < -r) location.x = width+r;
@@ -241,7 +240,7 @@ class Boid
     if (location.y > height+r) location.y = -r;
   }
 
-  // Méthode d'évitement des particules entre elles
+  // MÃ©thode d'Ã©vitement des particules entre elles
   PVector separate (ArrayList<Boid> boids)
   {
     float desiredseparation = 35.0f;
@@ -250,7 +249,7 @@ class Boid
     // Pour chaque particule ...
     for (Boid other : boids)
     {
-      // ... on vérifie 
+      // ... on vÃ©rifie 
       float d = PVector.dist(location, other.location);
       // Si la distance est entre 0 et un montant arbitraire
       if ((d > 0) && (d < desiredseparation))
@@ -269,7 +268,7 @@ class Boid
       steer.div((float)count);
     }
 
-    // Si le vecteur est supérieur à 0
+    // Si le vecteur est supÃ©rieur Ã  0
     if (steer.mag() > 0)
     {
       // First two lines of code below could be condensed with new PVector setMag() method
@@ -285,7 +284,7 @@ class Boid
     return steer;
   }
 
-  // Méthode d'alignement des particules et d'homogénisation de la vitesse
+  // MÃ©thode d'alignement des particules et d'homogÃ©nisation de la vitesse
   /*PVector align (ArrayList<Boid> boids)
   {
     float neighbordist = 40;
@@ -306,7 +305,6 @@ class Boid
       // First two lines of code below could be condensed with new PVector setMag() method
       // Not using this method until Processing.js catches up
       // sum.setMag(maxspeed);
-
       // Implement Reynolds: Steering = Desired - Velocity
       sum.normalize();
       sum.mult(maxspeed);
@@ -320,7 +318,7 @@ class Boid
     }
   }*/
 
-  // Méthode de cohésion du troupeau selon la position moyenne
+  // MÃ©thode de cohÃ©sion du troupeau selon la position moyenne
   /*PVector cohesion (ArrayList<Boid> boids)
   {
     float neighbordist = 35;
