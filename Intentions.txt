@@ -16,6 +16,7 @@ Inspirations :
 	- Mouvement des oiseaux en troupeau (flock)
 	- Mouvement des fantômes
 	- Connexion dans un réseau (network)
+	- Network (Casey Reas)
 
 Outils :
 	- Processing
