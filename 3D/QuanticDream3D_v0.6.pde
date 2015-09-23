@@ -1,7 +1,7 @@
 // Used for oveall rotation
 float angle;
 // Cube count-lower/raise to test performance
-int limit = 80;
+int limit = 60;
 // Tableau d'éléments
 Flock flock;
 
@@ -24,14 +24,14 @@ void setup()
   
   for (int i = 0; i < limit - 1; i++)
   {
-    flock.addElement(new Element(random(-150, 150), random(-150, 150), random(-150, 150)));
+    flock.addElement(new Element(random(-150,150), random(-150,150), random(-150,150)));
   }
 }
 
 void draw()
 {
   //background(0);
-  fill(200);
+  //fill(200);
   
   fill(140);
   pushMatrix();
@@ -53,10 +53,10 @@ void draw()
   // Set up some different colored lights
   //pointLight(51, 102, 255, 65, 60, 100); 
   //pointLight(200, 40, 60, -65, -60, -150);
-  ambientLight(random(0,256),random(0,256),random(0,256));
+  //ambientLight(random(0,256),random(0,256),random(0,256));
 
   // Raise overall light in scene 
-  ambientLight(70, 70, 10); 
+  //ambientLight(70, 70, 10); 
 
   // Center geometry in display windwow.
   // you can changlee 3rd argument ('0')
@@ -102,6 +102,7 @@ void draw()
       if (dist(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z) < 75)
       {
         // ... on trace un trait
+        strokeWeight(5);
         line(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);        
         neonColor = lerpColor(from, to, float(frameCount%100) / 100.0f);
         stroke(neonColor, 170);
@@ -182,6 +183,13 @@ class Element
   {
     velocity.add(acceleration);
     velocity.limit(maxspeed);
+        if(location.x > 400 || location.y > 400 || location.z > 400 || location.x < -400 || location.y < -400 || location.z < -400)
+    {
+      velocity.mult(-1);
+    }
+    else{
+      
+    }
     location.add(velocity);
     acceleration.mult(0);
   }
