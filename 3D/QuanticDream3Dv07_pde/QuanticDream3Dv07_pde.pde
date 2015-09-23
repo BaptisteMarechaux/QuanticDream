@@ -17,12 +17,12 @@ color neonColor;
 
 boolean run = true;
 int nbframeCount = 0;
-boolean translateCamera = false;
 
 float eyeX, eyeY, eyeZ;
 float ang = 0;
 int d = 600;
 boolean pressUp = false;
+boolean pressDown = false;
 
 void setup()
 {
@@ -45,12 +45,16 @@ void draw()
 {
   if(pressUp){
     ang+= 0.5;
-    if (ang>=360)
-        ang=0;
-    eyeY = (height/2)-d*(sin(radians(ang)));
-    eyeZ = d*cos(radians(ang));
   }
-    if (eyeZ<0)
+  if(pressDown){
+    ang-= 0.5;
+  }
+   if (ang>=360)
+        ang=0;
+     eyeY = (height/2)-d*(sin(radians(ang)));
+     eyeZ = d*cos(radians(ang));
+  
+  if (eyeZ<0)
     camera(eyeX, eyeY, eyeZ, 
     width/2, height/2, 0, 
     0, -1, 0);
@@ -58,6 +62,8 @@ void draw()
     camera(eyeX, eyeY, eyeZ, 
     width/2, height/2, 0, 
     0, 1, 0);
+    
+    
   //background(0);
   //fill(200);
   
@@ -306,7 +312,6 @@ class Element
 
 void keyPressed() 
 { 
-
    if (key == 'p') {
      run = !run;
      if(run){
@@ -314,44 +319,38 @@ void keyPressed()
      }else{
       nbframeCount= frameCount; 
      }
-   }
-   
-   if(key == 'z'){
-     translateCamera = true;
-   }else
-   translateCamera = false;
-   
+   }   
    
    switch(key) {
     // Move camera
-  case CODED:
-    if (keyCode == UP || key == 'a') {
+   case CODED:
+    if (keyCode == UP) {
       pressUp = true;
     }
     if (keyCode == DOWN) {
-      ang -= 5;
+      pressDown = true;
     }
     break;
  
-  default:
+   default:
     // !CODED:
     break;
   } // switch
 } 
 
 void keyReleased() {
-     switch(key) {
+  switch(key) {
     // Move camera
   case CODED:
     if (keyCode == UP) {
       pressUp = false;
     }
     if (keyCode == DOWN) {
-      ang -= 5;
+      pressDown = false;
     }
     break;
  
-  default:
+    default:
     // !CODED:
     break;
   } // switch
