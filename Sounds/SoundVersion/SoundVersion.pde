@@ -4,7 +4,8 @@ import ddf.minim.ugens.*;
 Minim minim;
 AudioOutput out;
 AudioSample player;
- 
+AudioPlayer song;
+
 // Used for oveall rotation
 float angle;
 // Cube count-lower/raise to test performance
@@ -23,7 +24,7 @@ color back = color(0,0,0);
 color neonColor;
 
 
-ArrayList<PVector> listSound = new ArrayList<PVector>();
+int count;
 
 void setup()
 {
@@ -34,6 +35,10 @@ void setup()
   flock = new Flock();
 
   minim = new Minim(this);
+  
+  song = minim.loadFile("music.mp3");
+
+  
   player = minim.loadSample("bounce.mp3",512);
   // use the getLineOut method of the Minim object to get an AudioOutput object
   out = minim.getLineOut();
@@ -98,62 +103,79 @@ void draw()
     to = color(random(0,256),random(0,256),random(0,256));
   }
   
-   /*if(frameCount%30 == 0)
-          {
-            println("play");
-            player.trigger();
-          }*/
-          
+  count = 0;
   // Parcours des particules
   for (int i = 0; i < flock.elements.size()-1; i++)
   {
     // On prend une particule ...
-    PVector p1 = flock.elements.get(i).location;
-    
-    for (int j = i; j < flock.elements.size(); j++)
+    Element elem1 = flock.elements.get(i);
+    PVector p1 = elem1.location;
+    for (int j = i + 1; j < flock.elements.size(); j++)
     {
       // ... et on parcourt toutes les autres
-      PVector p2 = flock.elements.get(j).location;
+      Element elem2 = flock.elements.get(j);
+      PVector p2 = elem2.location;
       // Si la distance entre les deux particules ciblées est inférieure à 50 ...
       if (dist(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z) < 75)
       {
-       
-        boolean count = false;
-        for (int k = 0; k < listSound.size(); k++) 
+        if(!elem1.linesid.hasValue(j))
         {
-          if(p1 == listSound.get(k))
-          {
-            println("get");
-          }
-          else
-          {
-            count = true;
-          }
-        }
-        if(count)
-        {
-          listSound.add(p1);
+           player.trigger();
+           elem1.linesid.append(j);
+           elem2.linesid.append(i);
+           println("appen line id");
         }
 
-        //out.resumeNotes();
         // ... on trace un trait
         line(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);        
-        neonColor = lerpColor(from, to, float(frameCount%100) / 100.0f);
+        neonColor = lerpColor(from, to, float(frameCount%100) / 100.0f);                                                                                                               
         stroke(neonColor, 170);
       }
-      
+      else if(elem1.linesid.hasValue(j))
+      {
+        int id = 0;
+        while(elem1.linesid.get(id) != j)
+        {
+          id ++;
+        }
+        elem1.linesid.remove(id);
+        id = 0;
+        while(elem2.linesid.get(id) != i)
+        {
+          id ++;
+        }
+        elem2.linesid.remove(id);
+      }
     }
   }
   
-  if(frameCount%20 == 0)
+  if(count == 0)
   {
-    for(int i=0; i < listSound.size(); i++)
-    {
-      player.trigger();
-    }
+    player.stop();
   }
+  
+  /* if(frameCount%30 == 0 && count > 0)
+   {
+       if(!song.isPlaying())
+       {
+            song.play();
+       }
+       else
+       {
+           song.pause();
+       }
+       count = 0;
+   }
+   else
+   {
+     song.pause();
+   }*/
 }
 
+class Line
+{
+  
+}
 class Flock
 {
   ArrayList<Element> elements;
@@ -186,6 +208,7 @@ class Element
   float r;  
   float maxforce; // Force de direction maximale
   float maxspeed; // Vitesse maximale
+  IntList linesid;
   
   Element (float posX, float posY, float posZ)
   {
@@ -201,6 +224,7 @@ class Element
     r = 2.0;
     maxspeed = 2.5f;
     maxforce = 0.03;
+    linesid = new IntList();
   }
   
   void run(ArrayList<Element> elements)
