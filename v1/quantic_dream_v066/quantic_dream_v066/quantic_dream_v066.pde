@@ -29,10 +29,17 @@ int randHue; // storing random hue values
 PGraphics pg;
 PShader blur;
 
+float depth = 0;
+boolean run = true;
+int nbframeCount = 0;
+boolean reset = false;
+boolean pressUp = false;
+boolean pressDown = false;
+
 
 void setup()
 {
-  size(800, 600, P3D); 
+  size(1500, 800, P3D); 
   //background(0);
   // Instanciation d'un nouveau troupeau
   flock = new Flock();
@@ -65,7 +72,8 @@ void setup()
 
 void draw()
 {
-  //background(0);
+  if(reset)
+  background(0);
   //fill(200);
   
   beat.detect(song.mix);
@@ -84,26 +92,27 @@ void draw()
   if ( eRadius < 0) eRadius = 0;
   //fill(0);
   
-  pushMatrix();
-    if(frameCount%60 == 0)
-    {
-      backFrom = to;
-      backTo = color(random(80,256),random(80,256),random(80,256));
-    }
-    back = lerpColor(from, to, float(frameCount%100) / 100.0f);
-    //fill(0, 5);
-    translate(width/2,height/2,-1000);
-    rectMode(CENTER);
-    //rect(0,0,5000,5000);
-  popMatrix();
-  
-  for (Agent m : movers) { 
-    m.run(); // display and update the thunderbolts 
-  } 
-  
-  stroke(neonColor);
-  fill(neonColor);
-  
+  if(run){
+    pushMatrix();
+      if(frameCount%60 == 0)
+      {
+        backFrom = to;
+        backTo = color(random(50,256),random(50,256),random(50,256));
+      }
+      back = lerpColor(from, to, float(frameCount%100) / 100.0f);
+      //fill(0, 5);
+      translate(width/2,height/2,-1000);
+      rectMode(CENTER);
+      //rect(0,0,5000,5000);
+    popMatrix();
+    
+    for (Agent m : movers) { 
+      m.run(); // display and update the thunderbolts 
+    } 
+    
+    stroke(neonColor);
+    fill(neonColor);
+  }
   // Set up some different colored lights
   //pointLight(51, 102, 255, 65, 60, 100); 
   //pointLight(200, 40, 60, -65, -60, -150);
@@ -115,11 +124,23 @@ void draw()
   // Center geometry in display windwow.
   // you can changlee 3rd argument ('0')
   // to move block group closer(+) / further(-)
-  translate(width/2, height/2, -200 + mouseY * 0.65);
+  //translate(width/2, height/2, -200 + mouseY * 0.65);
+  
+  if(pressUp){
+    depth+=2;
+  }
+  if(pressDown){
+    depth-=2;
+  }
+  translate(width/2, height/2, -200 + depth * 4);
   
   // Rotate around y and x axes
   rotateY(radians(angle));
-  //rotateX(radians(angle));
+  if(run){
+    // Used in rotate function calls above
+    angle += 0.8;
+  }
+  
   rotateX(-PI/6);
   rotateY(PI/3+mouseX/float(width)*5 + PI);
   rotateX(-(PI/3+mouseY/float(height)*5 + PI));
@@ -128,63 +149,65 @@ void draw()
   // Mouvement du troupeau
   flock.run();
   
-  // Used in rotate function calls above
-  angle += 0.8;
-  if(frameCount%600 == 0)
-  {
-   //background(0, 20, 80);  
-    randHue = (int) random(361); 
-    /*for (int i = 0; i < movers.length; i++) { 
-      movers[i].erase( randHue+i*int(random(10)) ); 
-    }*/
-  }
-  if(frameCount%60 == 0)
-  {
-    backFrom = to;
-    backTo = color(random(128,256),random(128,256),random(128,256));
-    
-  }
-  back = lerpColor(from, to, float(frameCount%100) / 100.0f);
-  fill(back, 2);
-  
-  if(frameCount%100 == 0)
-  {
-    from = to;
-    to = color(random(128,256),random(128,256),random(128,256));
-  }
-  filter(blur); 
-  //filter(BLUR,2);
-  // Parcours des particules
-  for (int i = 0; i < flock.elements.size()-1; i++)
-  {
-    // On prend une particule ...
-    PVector p1 = flock.elements.get(i).location;
-    Element e1 = flock.elements.get(i);
-    
-    for (int j = i; j < flock.elements.size(); j++)
+  if(run){
+    if(frameCount%600 == 0)
     {
-      // ... et on parcourt toutes les autres
-      PVector p2 = flock.elements.get(j).location;
-      Element e2 = flock.elements.get(j);
-      // Si la distance entre les deux particules ciblées est inférieure à 50 ...
-      if (dist(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z) < 250)
+     //background(0, 20, 80);  
+      randHue = (int) random(361); 
+      /*for (int i = 0; i < movers.length; i++) { 
+        movers[i].erase( randHue+i*int(random(10)) ); 
+      }*/
+    }
+    if(frameCount%60 == 0)
+    {
+      backFrom = to;
+      backTo = color(random(128,256),random(128,256),random(128,256));
+      
+    }
+    back = lerpColor(from, to, float(frameCount%100) / 100.0f);
+    fill(back, 2);
+    
+    if(frameCount%100 == 0)
+    {
+      from = to;
+      to = color(random(128,256),random(128,256),random(128,256));
+    }
+  }
+    filter(blur); 
+    //filter(BLUR,2);
+  if(run){
+    // Parcours des particules
+    for (int i = 0; i < flock.elements.size()-1; i++)
+    {
+      // On prend une particule ...
+      PVector p1 = flock.elements.get(i).location;
+      Element e1 = flock.elements.get(i);
+      
+      for (int j = i; j < flock.elements.size(); j++)
       {
-        e1.link(e2);
-        e1.linkDuration++;
-        if (e1.linkDuration > 2000)
+        // ... et on parcourt toutes les autres
+        PVector p2 = flock.elements.get(j).location;
+        Element e2 = flock.elements.get(j);
+        // Si la distance entre les deux particules ciblées est inférieure à 50 ...
+        if (dist(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z) < 250)
         {
-          e1.linkDuration = 0;
-          e1.createChild();
+          e1.link(e2);
+          e1.linkDuration++;
+          if (e1.linkDuration > 2000)
+          {
+            e1.linkDuration = 0;
+            e1.createChild();
+          }
+          // ... on trace un trait
+          strokeWeight(6);
+          line(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);        
+          neonColor = lerpColor(from, to, float(frameCount%100) / 100.0f);
+          stroke(neonColor, 170);
         }
-        // ... on trace un trait
-        strokeWeight(6);
-        line(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);        
-        neonColor = lerpColor(from, to, float(frameCount%100) / 100.0f);
-        stroke(neonColor, 170);
-      }
-      else
-      {
-        e1.unlink(e2);
+        else
+        {
+          e1.unlink(e2);
+        }
       }
     }
   }
@@ -207,7 +230,6 @@ void draw()
       }
     }
   }
-   
 }
 
 
@@ -272,12 +294,14 @@ class Element
   void run(ArrayList<Element> elements)
   {
     flock(elements);
+    if(run)
     update();
     render();
     if (childElements.size() != 0)
     {
       for (Child c : childElements)
       {
+        if(run)
         c.update();
         c.render();
       }
@@ -315,7 +339,7 @@ class Element
   
   void createChild()
   {
-    childElements.add(new Child(location.x, location.y + 5, location.z, 2, this));
+    childElements.add(new Child(location.x, location.y + 5, location.z, 10 * random(0.5, 2.5), this));
     println("Child created");
   }
   
@@ -343,7 +367,6 @@ class Element
         sphere(radius);
       else
         box(radius*1.5);
-     
     popMatrix();
   }
   
@@ -484,3 +507,45 @@ class Cloud extends Agent {
     ellipse(loc.x, loc.y, rad, rad); 
   } 
 } 
+
+void keyPressed() 
+{ 
+   if (key == 'p') {
+     run = !run;
+     if(run){
+       frameCount = nbframeCount;
+     }else{
+      nbframeCount= frameCount; 
+     }
+   }
+   if (key == 'r') {
+     reset = !reset;
+   } 
+   
+   switch(key) {
+    case 'z':
+      pressUp = true;
+          break;
+    case 's':
+      pressDown = true;
+      break;
+   default:
+    // !CODED:
+    break;
+  } // switch
+} 
+
+void keyReleased() {
+  switch(key) {
+    case 'z':
+      pressUp = false;
+          break;
+    case 's':
+      pressDown = false;
+          break;
+ 
+    default:
+    // !CODED:
+    break;
+  } // switch
+}
