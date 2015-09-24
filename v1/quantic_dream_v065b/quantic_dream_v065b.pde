@@ -58,7 +58,7 @@ void draw()
     if(frameCount%60 == 0)
     {
       backFrom = to;
-      backTo = color(random(0,256),random(0,256),random(0,256));
+      backTo = color(random(80,256),random(80,256),random(80,256));
     }
     back = lerpColor(from, to, float(frameCount%100) / 100.0f);
     //fill(0, 5);
@@ -110,7 +110,7 @@ void draw()
   if(frameCount%60 == 0)
   {
     backFrom = to;
-    backTo = color(random(0,256),random(0,256),random(0,256));
+    backTo = color(random(128,256),random(128,256),random(128,256));
     
   }
   back = lerpColor(from, to, float(frameCount%100) / 100.0f);
@@ -119,7 +119,7 @@ void draw()
   if(frameCount%100 == 0)
   {
     from = to;
-    to = color(random(0,256),random(0,256),random(0,256));
+    to = color(random(128,256),random(128,256),random(128,256));
   }
   filter(blur); 
   //filter(BLUR,2);
