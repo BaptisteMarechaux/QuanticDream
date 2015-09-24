@@ -25,7 +25,7 @@ PShader blur;
 void setup()
 {
   size(1280, 800, P3D); 
-  background(0);
+  //background(0);
   // Instanciation d'un nouveau troupeau
   flock = new Flock();
   
@@ -61,10 +61,10 @@ void draw()
       backTo = color(random(0,256),random(0,256),random(0,256));
     }
     back = lerpColor(from, to, float(frameCount%100) / 100.0f);
-    fill(0, 5);
+    //fill(0, 5);
     translate(width/2,height/2,-1000);
     rectMode(CENTER);
-    rect(0,0,5000,5000);
+    //rect(0,0,5000,5000);
   popMatrix();
   
   for (Agent m : movers) { 
@@ -88,16 +88,17 @@ void draw()
   translate(width/2, height/2, -200 + mouseY * 0.65);
   
   // Rotate around y and x axes
-  //rotateY(radians(angle));
+  rotateY(radians(angle));
   //rotateX(radians(angle));
   rotateX(-PI/6);
   rotateY(PI/3+mouseX/float(height)*5 + PI);
+
   
   // Mouvement du troupeau
   flock.run();
   
   // Used in rotate function calls above
-  angle += 0.2;
+  angle += 0.8;
   if(frameCount%600 == 0)
   {
    //background(0, 20, 80);  
@@ -225,15 +226,15 @@ class Element
     y = posY;
     z = posZ;
     location = new PVector(x, y, z);
-    this.radius = radius;
+    this.radius = radius * random(0.5, 2.5);
     
     acceleration = new PVector(0, 0, 0);
     float angle = random(TWO_PI);
     velocity = new PVector(cos(angle), sin(angle), cos(angle));
     location = new PVector(x, y, z);
     r = 2.0;
-    maxspeed = 5f;
-    maxforce = 2.5;
+    maxspeed = 5f * random(0.5, 10);
+    maxforce = 2.5 * random(0.5, 10);
   }
   
   void run(ArrayList<Element> elements)
