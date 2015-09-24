@@ -3,7 +3,7 @@ import ddf.minim.ugens.*;
 
 Minim minim;
 AudioOutput out;
-AudioSample player;
+AudioSample []player = new AudioSample[12];
 AudioPlayer song;
 
 // Used for oveall rotation
@@ -25,6 +25,8 @@ color neonColor;
 
 
 int count;
+int last = 0;
+int rand;
 
 void setup()
 {
@@ -36,22 +38,11 @@ void setup()
 
   minim = new Minim(this);
   
+  for(int i = 0; i < 12; i++)
+  {
+    player[i] = minim.loadSample("note" + i + ".wav");
+  }
   song = minim.loadFile("music.mp3");
-
-  
-  player = minim.loadSample("bounce.mp3",512);
-  // use the getLineOut method of the Minim object to get an AudioOutput object
-  out = minim.getLineOut();
-  out.setTempo( 80 );
-  out.pauseNotes();
-  
-  
-  for(int i = 0; i < 180; i++)
-   {
-   out.playNote(i, random(0.9, 2), random(90,200));
-   }
-   
-   
   for (int i = 0; i < limit - 1; i++)
   {
     flock.addElement(new Element(random(-150, 150), random(-150, 150), random(-150, 150)));
@@ -121,10 +112,21 @@ void draw()
         
         if(!elem1.linesid.hasValue(j))
         {
+          
+           
+           for(int k = 0; k < 12; k++)
+          {
+              if(millis() > last + player[k].length())
+             {
+                rand = int(random(0,12));
+                last = millis();
+                player[rand].trigger();
+              
+             }
+          }
            
            elem1.linesid.append(j);
            elem2.linesid.append(i);
-           println("appen line id");
         }
 
         // ... on trace un trait
@@ -134,7 +136,6 @@ void draw()
       }
       else if(elem1.linesid.hasValue(j))
       {
-        player.trigger();
         int id = 0;
         while(elem1.linesid.get(id) != j)
         {
