@@ -118,9 +118,10 @@ void draw()
       // Si la distance entre les deux particules ciblées est inférieure à 50 ...
       if (dist(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z) < 75)
       {
+        
         if(!elem1.linesid.hasValue(j))
         {
-           player.trigger();
+           
            elem1.linesid.append(j);
            elem2.linesid.append(i);
            println("appen line id");
@@ -133,6 +134,7 @@ void draw()
       }
       else if(elem1.linesid.hasValue(j))
       {
+        player.trigger();
         int id = 0;
         while(elem1.linesid.get(id) != j)
         {
@@ -148,12 +150,6 @@ void draw()
       }
     }
   }
-  
-  if(count == 0)
-  {
-    player.stop();
-  }
-  
   /* if(frameCount%30 == 0 && count > 0)
    {
        if(!song.isPlaying())
