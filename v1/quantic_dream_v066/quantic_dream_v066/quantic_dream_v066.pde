@@ -42,6 +42,7 @@ void setup()
   minim = new Minim(this);
   song = minim.loadFile("Intro.mp3", 2048);
   song.play();
+  song.loop();
   // a beat detection object song SOUND_ENERGY mode with a sensitivity of 10 milliseconds
   beat = new BeatDetect();
   ellipseMode(RADIUS);
