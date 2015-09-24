@@ -46,7 +46,7 @@ void setup()
   // a beat detection object song SOUND_ENERGY mode with a sensitivity of 10 milliseconds
   beat = new BeatDetect();
   ellipseMode(RADIUS);
-  eRadius = 20;
+  eRadius = 0;
   for (int i = 0; i < limit - 1; i++)
   {
     flock.addElement(new Element(random(-150,150), random(-150,150), random(-150,150), 10));
@@ -71,18 +71,15 @@ void draw()
   beat.detect(song.mix);
   float a = map(eRadius, 20, 80, 60, 255);
   fill(255,255,255, a);
-  if ( beat.isOnset() ) eRadius = 25;
+  if ( beat.isOnset() ) eRadius = 50;
   
   int divWidth = 3, divHeight = 3;
   
-  for(int i = 1; i < divWidth; i++)
-  {
-     for(int j = 1; j < divHeight; j++)
-     {
-       ellipse((width/divWidth) * i, (height/divHeight) * j, eRadius, eRadius);
-     }
-  }
- 
+  ellipse(50, 50, eRadius, eRadius);
+  ellipse(50, height - 50, eRadius, eRadius);
+  ellipse(width - 50,50, eRadius, eRadius);
+  ellipse(width - 50, height - 50, eRadius, eRadius);
+  
   eRadius *= 0.95;
   if ( eRadius < 0) eRadius = 0;
   //fill(0);
