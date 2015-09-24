@@ -25,7 +25,7 @@ PShader blur;
 void setup()
 {
   size(1280, 800, P3D); 
-  //background(0);
+  background(0);
   // Instanciation d'un nouveau troupeau
   flock = new Flock();
   
@@ -61,10 +61,10 @@ void draw()
       backTo = color(random(0,256),random(0,256),random(0,256));
     }
     back = lerpColor(from, to, float(frameCount%100) / 100.0f);
-    //fill(0, 5);
+    fill(0, 5);
     translate(width/2,height/2,-1000);
     rectMode(CENTER);
-    //rect(0,0,5000,5000);
+    rect(0,0,5000,5000);
   popMatrix();
   
   for (Agent m : movers) { 
@@ -88,17 +88,16 @@ void draw()
   translate(width/2, height/2, -200 + mouseY * 0.65);
   
   // Rotate around y and x axes
-  rotateY(radians(angle));
+  //rotateY(radians(angle));
   //rotateX(radians(angle));
   rotateX(-PI/6);
   rotateY(PI/3+mouseX/float(height)*5 + PI);
-
   
   // Mouvement du troupeau
   flock.run();
   
   // Used in rotate function calls above
-  angle += 0.8;
+  angle += 0.2;
   if(frameCount%600 == 0)
   {
    //background(0, 20, 80);  
@@ -136,7 +135,7 @@ void draw()
       PVector p2 = flock.elements.get(j).location;
       Element e2 = flock.elements.get(j);
       // Si la distance entre les deux particules ciblées est inférieure à 50 ...
-      if (dist(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z) < 200)
+      if (dist(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z) < 75)
       {
         e1.link(e2);
         e1.linkDuration++;
@@ -146,7 +145,7 @@ void draw()
           e1.createChild();
         }
         // ... on trace un trait
-        strokeWeight(6);
+        strokeWeight(5);
         line(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);        
         neonColor = lerpColor(from, to, float(frameCount%100) / 100.0f);
         stroke(neonColor, 170);
@@ -166,9 +165,9 @@ void draw()
       for (int j = 0; j < flock.elements.get(i).childElements.size()-1; j++)
       {
         PVector p2 = flock.elements.get(i).childElements.get(j).location;
-        if (dist(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z) < 350)
+        if (dist(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z) < 175)
         {
-          strokeWeight(6);
+          strokeWeight(5);
           line(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);        
           neonColor = lerpColor(from, to, float(frameCount%100) / 100.0f);
           stroke(neonColor, 170);
@@ -226,15 +225,15 @@ class Element
     y = posY;
     z = posZ;
     location = new PVector(x, y, z);
-    this.radius = radius * random(0.5, 2.5);
+    this.radius = radius;
     
     acceleration = new PVector(0, 0, 0);
     float angle = random(TWO_PI);
     velocity = new PVector(cos(angle), sin(angle), cos(angle));
     location = new PVector(x, y, z);
     r = 2.0;
-    maxspeed = 5f * random(0.1, 6);
-    maxforce = 2.5 * random(0.1, 6);
+    maxspeed = 5f;
+    maxforce = 2.5;
   }
   
   void run(ArrayList<Element> elements)
@@ -291,9 +290,13 @@ class Element
   {
     velocity.add(acceleration);
     velocity.limit(maxspeed);
-    if(location.x > 1200 || location.y > 1200 || location.z >1200 || location.x < -1200 || location.y < -1200 || location.z < -1200)
+    if(location.x > 400 || location.y > 400 || location.z > 400 || location.x < -400 || location.y < -400 || location.z < -400)
     {
       velocity.mult(-1);
+    }
+    else
+    {
+      
     }
     location.add(velocity);
     acceleration.mult(0);
@@ -307,10 +310,10 @@ class Element
       fill(neonColor);
       translate(location.x, location.y, location.z);
       sphereDetail(15);
-      if (int(random(0,4)) <= 2)
+      if (int(random(0,3)) < 1)
         sphere(radius);
       else
-        box(radius*1.5);
+        box(radius*2);
     popMatrix();
   }
   
