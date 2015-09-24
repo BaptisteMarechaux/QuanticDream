@@ -1,7 +1,7 @@
 // Used for oveall rotation
 float angle;
 // Cube count-lower/raise to test performance
-int limit = 30;
+int limit = 40;
 // Tableau d'éléments
 Flock flock;
 
@@ -24,7 +24,7 @@ PShader blur;
 
 void setup()
 {
-  size(800, 600, P3D); 
+  size(1280, 800, P3D); 
   background(0);
   // Instanciation d'un nouveau troupeau
   flock = new Flock();
@@ -102,9 +102,9 @@ void draw()
   {
    //background(0, 20, 80);  
     randHue = (int) random(361); 
-    for (int i = 0; i < movers.length; i++) { 
+    /*for (int i = 0; i < movers.length; i++) { 
       movers[i].erase( randHue+i*int(random(10)) ); 
-    } 
+    }*/
   }
   if(frameCount%60 == 0)
   {
@@ -165,10 +165,13 @@ void draw()
       for (int j = 0; j < flock.elements.get(i).childElements.size()-1; j++)
       {
         PVector p2 = flock.elements.get(i).childElements.get(j).location;
-        strokeWeight(5);
-        line(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);        
-        neonColor = lerpColor(from, to, float(frameCount%100) / 100.0f);
-        stroke(neonColor, 170);
+        if (dist(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z) < 175)
+        {
+          strokeWeight(5);
+          line(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);        
+          neonColor = lerpColor(from, to, float(frameCount%100) / 100.0f);
+          stroke(neonColor, 170);
+        }
       }
     }
   }
@@ -229,8 +232,8 @@ class Element
     velocity = new PVector(cos(angle), sin(angle), cos(angle));
     location = new PVector(x, y, z);
     r = 2.0;
-    maxspeed = 2.5f;
-    maxforce = 0.03;
+    maxspeed = 5f;
+    maxforce = 2.5;
   }
   
   void run(ArrayList<Element> elements)
@@ -302,16 +305,12 @@ class Element
   void render()
   {
     pushMatrix();
-    translate(location.x, location.y, location.z);
-    sphereDetail(15);
-    sphere(radius);
-    
-    fill(255);
-    sphere(radius*0.7);
-    
-    stroke(neonColor);
-    noStroke();
-    fill(neonColor);
+      stroke(neonColor,1);
+      //noStroke();
+      fill(neonColor);
+      translate(location.x, location.y, location.z);
+      sphereDetail(15);
+      sphere(radius);
     popMatrix();
   }
   
