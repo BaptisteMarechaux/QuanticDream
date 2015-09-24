@@ -24,7 +24,7 @@ PShader blur;
 
 void setup()
 {
-  size(1280, 800, P3D); 
+  size(1440, 800, P3D); 
   //background(0);
   // Instanciation d'un nouveau troupeau
   flock = new Flock();
@@ -91,7 +91,8 @@ void draw()
   rotateY(radians(angle));
   //rotateX(radians(angle));
   rotateX(-PI/6);
-  rotateY(PI/3+mouseX/float(height)*5 + PI);
+  rotateY(PI/3+mouseX/float(width)*5 + PI);
+  rotateX(-(PI/3+mouseY/float(height)*5 + PI));
 
   
   // Mouvement du troupeau
@@ -136,7 +137,7 @@ void draw()
       PVector p2 = flock.elements.get(j).location;
       Element e2 = flock.elements.get(j);
       // Si la distance entre les deux particules ciblées est inférieure à 50 ...
-      if (dist(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z) < 200)
+      if (dist(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z) < 250)
       {
         e1.link(e2);
         e1.linkDuration++;
@@ -166,7 +167,7 @@ void draw()
       for (int j = 0; j < flock.elements.get(i).childElements.size()-1; j++)
       {
         PVector p2 = flock.elements.get(i).childElements.get(j).location;
-        if (dist(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z) < 350)
+        if (dist(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z) < 300)
         {
           strokeWeight(6);
           line(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);        
@@ -302,7 +303,7 @@ class Element
   void render()
   {
     pushMatrix();
-      stroke(neonColor,1);
+      stroke(neonColor, 2);
       //noStroke();
       fill(neonColor);
       translate(location.x, location.y, location.z);
