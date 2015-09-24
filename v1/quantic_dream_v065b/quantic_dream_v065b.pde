@@ -1,7 +1,7 @@
 // Used for oveall rotation
 float angle;
 // Cube count-lower/raise to test performance
-int limit = 60;
+int limit = 30;
 // Tableau d'éléments
 Flock flock;
 
@@ -18,12 +18,19 @@ color neonColor;
 Agent[] movers; // The thunderbolts 
 int randHue; // storing random hue values 
 
+PGraphics pg;
+PShader blur;
+
+
 void setup()
 {
   size(800, 600, P3D); 
   background(0);
   // Instanciation d'un nouveau troupeau
   flock = new Flock();
+  
+  blur = loadShader("blur.glsl");
+
   
   for (int i = 0; i < limit - 1; i++)
   {
@@ -39,6 +46,7 @@ void setup()
     movers[i] = new Agent(5+i, 1+i, randHue+i*int(random(10)), 100/(i+1)); 
   } 
 }
+
 
 void draw()
 {
@@ -90,7 +98,7 @@ void draw()
   
   // Used in rotate function calls above
   angle += 0.2;
-  if(frameCount%2400 == 0)
+  if(frameCount%600 == 0)
   {
    //background(0, 20, 80);  
     randHue = (int) random(361); 
@@ -112,6 +120,8 @@ void draw()
     from = to;
     to = color(random(0,256),random(0,256),random(0,256));
   }
+  filter(blur); 
+  //filter(BLUR,2);
   // Parcours des particules
   for (int i = 0; i < flock.elements.size()-1; i++)
   {
@@ -163,6 +173,7 @@ void draw()
     }
   }
 }
+
 
 class Flock
 {
@@ -294,6 +305,10 @@ class Element
     translate(location.x, location.y, location.z);
     sphereDetail(15);
     sphere(radius);
+    
+    fill(255);
+    sphere(radius*0.7);
+    
     stroke(neonColor);
     noStroke();
     fill(neonColor);
