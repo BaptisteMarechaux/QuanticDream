@@ -20,9 +20,14 @@ int nbframeCount = 0;
 
 float eyeX, eyeY, eyeZ;
 float ang = 0;
+float ang2 = 0;
 int d = 600;
 boolean pressUp = false;
 boolean pressDown = false;
+boolean pressA = false;
+boolean pressLeft = false;
+boolean pressRight = false;
+int depth = 0;
 
 void setup()
 {
@@ -44,13 +49,24 @@ void setup()
 void draw()
 {
   if(pressUp){
-    ang+= 0.5;
+    //ang+= 1;
+    depth+=1;
   }
   if(pressDown){
-    ang-= 0.5;
+    //ang-= 1;
+    depth-=1;
+  }
+  print(depth + "\n");
+  if(pressLeft){
+    ang2+= 1;
+  }
+  if(pressRight){
+    ang2-= 1;
   }
    if (ang>=360)
         ang=0;
+      
+     eyeX = (height/2)-d*(sin(radians(ang2)));
      eyeY = (height/2)-d*(sin(radians(ang)));
      eyeZ = d*cos(radians(ang));
   
@@ -118,13 +134,18 @@ void draw()
   // Center geometry in display windwow.
   // you can changlee 3rd argument ('0')
   // to move block group closer(+) / further(-)
-  translate(width/2, height/2, -200 + mouseY * 0.65);
-
+  //translate(width/2, height/2, -200 + mouseY * 0.65);
+  translate(width/2, height/2, -200 + depth * 4);
+  
   // Rotate around y and x axes
   //rotateY(radians(angle));
   //rotateX(radians(angle));
   rotateX(-PI/6);
-  rotateY(PI/3+mouseX/float(height)*5 + PI);
+
+  rotateY(PI/3+mouseX/float(width)*5 + PI);
+  rotateX(-(PI/3+mouseY/float(height)*5 + PI));
+
+
   // Mouvement du troupeau
   flock.run();
   
@@ -321,6 +342,10 @@ void keyPressed()
      }
    }   
    
+      if (key == 'a') {
+     pressA = true;
+   }  
+   
    switch(key) {
     // Move camera
    case CODED:
@@ -330,8 +355,19 @@ void keyPressed()
     if (keyCode == DOWN) {
       pressDown = true;
     }
-    break;
- 
+        break;
+    case 'z':
+      pressUp = true;
+          break;
+    case 's':
+      pressDown = true;
+      break;
+   case 'q':
+      pressLeft = true;
+          break;
+   case 'd':
+      pressRight = true;
+          break;
    default:
     // !CODED:
     break;
@@ -339,6 +375,10 @@ void keyPressed()
 } 
 
 void keyReleased() {
+        if (key == 'a') {
+     pressA = false;
+   }  
+  
   switch(key) {
     // Move camera
   case CODED:
@@ -348,7 +388,19 @@ void keyReleased() {
     if (keyCode == DOWN) {
       pressDown = false;
     }
-    break;
+        break;
+    case 'z':
+      pressUp = false;
+          break;
+    case 's':
+      pressDown = false;
+          break;
+    case 'q':
+      pressLeft = false;
+          break;
+    case 'd':
+      pressRight = false;
+          break;
  
     default:
     // !CODED:
