@@ -628,7 +628,7 @@ public void keyReleased() {
 }
   public void settings() {  size(1500, 800, P3D); }
   static public void main(String[] passedArgs) {
-    String[] appletArgs = new String[] { "--present", "--window-color=#666666", "--stop-color=#cccccc", "quantic_dream_v066b" };
+    String[] appletArgs = new String[] { "--present", "--window-color=#666666", "--hide-stop", "quantic_dream_v066b" };
     if (passedArgs != null) {
       PApplet.main(concat(appletArgs, passedArgs));
     } else {
