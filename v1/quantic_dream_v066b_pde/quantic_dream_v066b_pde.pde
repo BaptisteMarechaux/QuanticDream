@@ -4,6 +4,11 @@ import ddf.minim.analysis.*;
 Minim minim;
 AudioPlayer song;
 BeatDetect beat;
+
+//Pour gradients
+int Y_AXIS = 1;
+int X_AXIS = 2;
+
 int eRadius;
 
 // Used for oveall rotation
@@ -24,7 +29,7 @@ color back = color(0,0,0);
 color neonColor;
 
 Agent[] movers; // The thunderbolts 
-int randHue; // storing random hue values 
+int randHue; // storing random hue values
 
 PGraphics pg;
 PShader blur;
@@ -36,9 +41,13 @@ boolean reset = false;
 boolean pressUp = false;
 boolean pressDown = false;
 
+PImage blackGrad;
+PImage rainbowGrad;
+
 
 void setup()
 {
+  
   size(1500, 800, P3D); 
   //background(0);
   // Instanciation d'un nouveau troupeau
@@ -61,7 +70,7 @@ void setup()
   
   movers = new Agent[255]; // the more Agents, the denser the thunderstorm 
   
-  randHue = (int) random(361); 
+  randHue = (int) random(361);
 
 
   for (int i = 0; i < movers.length; i++) { 
@@ -79,7 +88,10 @@ void draw()
   beat.detect(song.mix);
   float a = map(eRadius, 20, 80, 60, 255);
   fill(255,255,255, a);
-  if ( beat.isOnset() ) eRadius = 50;
+  if ( beat.isOnset() ){
+    eRadius = 50;
+    backTo = color(random(50,256),random(50,256),random(50,256));
+  }
   
   int divWidth = 3, divHeight = 3;
   
@@ -119,7 +131,7 @@ void draw()
   //ambientLight(random(0,256),random(0,256),random(0,256));
 
   // Raise overall light in scene 
-  //ambientLight(70, 70, 10); 
+  //ambientLight(70, 70, 10);
 
   // Center geometry in display windwow.
   // you can changlee 3rd argument ('0')
@@ -132,6 +144,9 @@ void draw()
   if(pressDown){
     depth-=2;
   }
+  
+  pushMatrix();
+  
   translate(width/2, height/2, -200 + depth * 4);
   
   // Rotate around y and x axes
@@ -161,7 +176,17 @@ void draw()
     if(frameCount%60 == 0)
     {
       backFrom = to;
-      backTo = color(random(128,256),random(128,256),random(128,256));
+      float r = random(20,256);
+      float g = random(20,256);
+      float b = random(20,256);
+      while(r+g+b < 255)
+      {
+        r = random(20,256);
+        g = random(20,256);
+        b = random(20,256);
+      }
+      
+      backTo = color(r,g,b);
       
     }
     back = lerpColor(from, to, float(frameCount%100) / 100.0f);
@@ -170,7 +195,7 @@ void draw()
     if(frameCount%100 == 0)
     {
       from = to;
-      to = color(random(128,256),random(128,256),random(128,256));
+      to = color(random(20,256),random(20,256),random(20,256));
     }
   }
     filter(blur); 
@@ -209,7 +234,7 @@ void draw()
           e1.unlink(e2);
         }
       }
-    }
+    } 
   }
   
   for (int i = 0; i < flock.elements.size()-1; i++)
@@ -230,8 +255,31 @@ void draw()
       }
     }
   }
+  
+   popMatrix();  
 }
 
+void setGradient(int x, int y, float w, float h, color c1, color c2, int axis ) {
+
+  noFill();
+
+  if (axis == Y_AXIS) {  // Top to bottom gradient
+    for (int i = y; i <= y+h; i++) {
+      float inter = map(i, y, y+h, 0, 1);
+      color c = lerpColor(c1, c2, inter);
+      stroke(c);
+      line(x, i, x+w, i);
+    }
+  }  
+  else if (axis == X_AXIS) {  // Left to right gradient
+    for (int i = x; i <= x+w; i++) {
+      float inter = map(i, x, x+w, 0, 1);
+      color c = lerpColor(c1, c2, inter);
+      stroke(c);
+      line(i, y, i, y+h);
+    }
+  }
+}
 
 class Flock
 {
@@ -361,6 +409,7 @@ class Element
       stroke(neonColor, 2);
       //noStroke();
       fill(neonColor);
+      neonColor += 255 - location.x;
       translate(location.x, location.y, location.z);
       sphereDetail(15);
       if (int(random(0,4)) <= 2)
@@ -458,47 +507,47 @@ class Agent {
     stroke(hue, 100, 100, alpha); 
     strokeWeight(thickness); 
     line(prevLoc.x, prevLoc.y, loc.x, loc.y); 
-  } 
+  }
 
   void offScreen() { 
     if (loc.x > width) {  
       loc.x = 0;  
       prevLoc.x = loc.x; 
-    } 
+    }
 
 
     if (loc.x < 0) {  
       loc.x = width;  
       prevLoc.x = loc.x; 
-    } 
+    }
 
 
     if (loc.y > height) {  
       loc.y = 0;  
       prevLoc.y = loc.y; 
-    } 
+    }
 
     if (loc.y < 0) {  
       loc.y = height;  
       prevLoc.y = loc.y; 
     } 
-  } 
+  }
 
   void erase(int _hue) {  // method to set back location and hue of the bolt 
     loc.mult(0);  
     loc.x = width/2;  
     loc.y = height/2; 
-    hue = _hue; 
+    hue = _hue;
 
-  } 
+  }
 
-} 
+}
 
 class Cloud extends Agent { 
   float rad; 
   Cloud(float _step, float _alpha, float _rad) { 
     super(_step, 0, 0, _alpha); 
-    rad = _rad; 
+    rad = _rad;
 
   } 
   void display()  { 
@@ -506,7 +555,7 @@ class Cloud extends Agent {
     fill(hue, 0, 0, alpha); 
     ellipse(loc.x, loc.y, rad, rad); 
   } 
-} 
+}
 
 void keyPressed() 
 { 
@@ -522,11 +571,6 @@ void keyPressed()
      reset = !reset;
    } 
    
-   if (key == ' ')
-   {
-     saveFrame("capture_####.png");
-   }
-   
    switch(key) {
     case 'z':
       pressUp = true;
@@ -534,11 +578,15 @@ void keyPressed()
     case 's':
       pressDown = true;
       break;
+      
+    case  ' ':
+    saveFrame("capture_####.png");
+    break;
    default:
     // !CODED:
     break;
   } // switch
-} 
+}
 
 void keyReleased() {
   switch(key) {
