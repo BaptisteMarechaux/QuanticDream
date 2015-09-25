@@ -1,5 +1,24 @@
-import ddf.minim.*;
-import ddf.minim.analysis.*;
+import processing.core.*; 
+import processing.data.*; 
+import processing.event.*; 
+import processing.opengl.*; 
+
+import ddf.minim.*; 
+import ddf.minim.analysis.*; 
+
+import java.util.HashMap; 
+import java.util.ArrayList; 
+import java.io.File; 
+import java.io.BufferedReader; 
+import java.io.PrintWriter; 
+import java.io.InputStream; 
+import java.io.OutputStream; 
+import java.io.IOException; 
+
+public class quantic_dream_v066b extends PApplet {
+
+
+
 
 Minim minim;
 AudioPlayer song;
@@ -15,18 +34,18 @@ int eRadius;
 float angle;
 // Cube count-lower/raise to test performance
 int limit = 40;
-// Tableau d'éléments
+// Tableau d'\u00e9l\u00e9ments
 Flock flock;
 
-color red = color(255,0,0);
-color green = color(0,255, 0);
-color blue = color(0,0,255);
-color from = color(0,0,0);
-color to = blue;
-color backFrom = color(0,0,0);
-color backTo = color(0,0,0);
-color back = color(0,0,0);
-color neonColor;
+int red = color(255,0,0);
+int green = color(0,255, 0);
+int blue = color(0,0,255);
+int from = color(0,0,0);
+int to = blue;
+int backFrom = color(0,0,0);
+int backTo = color(0,0,0);
+int back = color(0,0,0);
+int neonColor;
 
 Agent[] movers; // The thunderbolts 
 int randHue; // storing random hue values 
@@ -45,10 +64,10 @@ PImage blackGrad;
 PImage rainbowGrad;
 
 
-void setup()
+public void setup()
 {
   
-  size(1500, 800, P3D); 
+   
   //background(0);
   blackGrad = loadImage("BlackGrad.png");
   rainbowGrad = loadImage("Rainbow.png");
@@ -76,12 +95,12 @@ void setup()
 
 
   for (int i = 0; i < movers.length; i++) { 
-    movers[i] = new Agent(5+i, 1+i, randHue+i*int(random(10)), 100/(i+1)); 
+    movers[i] = new Agent(5+i, 1+i, randHue+i*PApplet.parseInt(random(10)), 100/(i+1)); 
   } 
 }
 
 
-void draw()
+public void draw()
 {
   if(reset)
   background(0);
@@ -102,7 +121,7 @@ void draw()
   ellipse(width - 50,50, eRadius, eRadius);
   ellipse(width - 50, height - 50, eRadius, eRadius);
   
-  eRadius *= 0.95;
+  eRadius *= 0.95f;
   if ( eRadius < 0) eRadius = 0;
   //fill(0);
   
@@ -113,7 +132,7 @@ void draw()
         backFrom = to;
         backTo = color(random(50,256),random(50,256),random(50,256));
       }
-      back = lerpColor(from, to, float(frameCount%100) / 100.0f);
+      back = lerpColor(from, to, PApplet.parseFloat(frameCount%100) / 100.0f);
       //fill(0, 5);
       translate(width/2,height/2,-1000);
       rectMode(CENTER);
@@ -155,12 +174,12 @@ void draw()
   rotateY(radians(angle));
   if(run){
     // Used in rotate function calls above
-    angle += 0.8;
+    angle += 0.8f;
   }
   
   rotateX(-PI/6);
-  rotateY(PI/3+mouseX/float(width)*5 + PI);
-  rotateX(-(PI/3+mouseY/float(height)*5 + PI));
+  rotateY(PI/3+mouseX/PApplet.parseFloat(width)*5 + PI);
+  rotateX(-(PI/3+mouseY/PApplet.parseFloat(height)*5 + PI));
 
   
   // Mouvement du troupeau
@@ -191,7 +210,7 @@ void draw()
       backTo = color(r,g,b);
       
     }
-    back = lerpColor(from, to, float(frameCount%100) / 100.0f);
+    back = lerpColor(from, to, PApplet.parseFloat(frameCount%100) / 100.0f);
     fill(back, 2);
     
     if(frameCount%100 == 0)
@@ -215,7 +234,7 @@ void draw()
         // ... et on parcourt toutes les autres
         PVector p2 = flock.elements.get(j).location;
         Element e2 = flock.elements.get(j);
-        // Si la distance entre les deux particules ciblées est inférieure à 50 ...
+        // Si la distance entre les deux particules cibl\u00e9es est inf\u00e9rieure \u00e0 50 ...
         if (dist(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z) < 250)
         {
           e1.link(e2);
@@ -228,7 +247,7 @@ void draw()
           // ... on trace un trait
           strokeWeight(6);
           line(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);        
-          neonColor = lerpColor(from, to, float(frameCount%100) / 100.0f);
+          neonColor = lerpColor(from, to, PApplet.parseFloat(frameCount%100) / 100.0f);
           stroke(neonColor, 170);
         }
         else
@@ -251,7 +270,7 @@ void draw()
         {
           strokeWeight(6);
           line(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);        
-          neonColor = lerpColor(from, to, float(frameCount%100) / 100.0f);
+          neonColor = lerpColor(from, to, PApplet.parseFloat(frameCount%100) / 100.0f);
           stroke(neonColor, 170);
         }
       }
@@ -261,14 +280,14 @@ void draw()
    popMatrix();  
 }
 
-void setGradient(int x, int y, float w, float h, color c1, color c2, int axis ) {
+public void setGradient(int x, int y, float w, float h, int c1, int c2, int axis ) {
 
   noFill();
 
   if (axis == Y_AXIS) {  // Top to bottom gradient
     for (int i = y; i <= y+h; i++) {
       float inter = map(i, y, y+h, 0, 1);
-      color c = lerpColor(c1, c2, inter);
+      int c = lerpColor(c1, c2, inter);
       stroke(c);
       line(x, i, x+w, i);
     }
@@ -276,7 +295,7 @@ void setGradient(int x, int y, float w, float h, color c1, color c2, int axis ) 
   else if (axis == X_AXIS) {  // Left to right gradient
     for (int i = x; i <= x+w; i++) {
       float inter = map(i, x, x+w, 0, 1);
-      color c = lerpColor(c1, c2, inter);
+      int c = lerpColor(c1, c2, inter);
       stroke(c);
       line(i, y, i, y+h);
     }
@@ -292,7 +311,7 @@ class Flock
     elements = new ArrayList<Element>();
   }
   
-  void run()
+  public void run()
   {
     for (Element e : elements)
     {
@@ -300,7 +319,7 @@ class Flock
     }
   }
   
-  void addElement(Element e)
+  public void addElement(Element e)
   {
     elements.add(e);
   }
@@ -308,10 +327,10 @@ class Flock
 
 class Element
 {
-  float x, y, z; // Coordonnées de la position de l'élément
-  PVector location; // Position de l'élément
+  float x, y, z; // Coordonn\u00e9es de la position de l'\u00e9l\u00e9ment
+  PVector location; // Position de l'\u00e9l\u00e9ment
   PVector velocity; // Vecteur directionnel de la particule
-  PVector acceleration; // Accélération de la particule
+  PVector acceleration; // Acc\u00e9l\u00e9ration de la particule
   float r;  
   float maxforce; // Force de direction maximale
   float maxspeed; // Vitesse maximale
@@ -330,18 +349,18 @@ class Element
     y = posY;
     z = posZ;
     location = new PVector(x, y, z);
-    this.radius = radius * random(0.5, 2.5);
+    this.radius = radius * random(0.5f, 2.5f);
     
     acceleration = new PVector(0, 0, 0);
     float angle = random(TWO_PI);
     velocity = new PVector(cos(angle), sin(angle), cos(angle));
     location = new PVector(x, y, z);
-    r = 2.0;
-    maxspeed = 5f * random(0.1, 6);
-    maxforce = 2.5 * random(0.1, 6);
+    r = 2.0f;
+    maxspeed = 5f * random(0.1f, 6);
+    maxforce = 2.5f * random(0.1f, 6);
   }
   
-  void run(ArrayList<Element> elements)
+  public void run(ArrayList<Element> elements)
   {
     flock(elements);
     if(run)
@@ -358,24 +377,24 @@ class Element
     }
   }
   
-  void applyForce(PVector force)
+  public void applyForce(PVector force)
   {
     acceleration.add(force);
   }
   
-  void flock(ArrayList<Element> elements)
+  public void flock(ArrayList<Element> elements)
   {
     PVector sep = separate(elements);
-    sep.mult(1.5);
+    sep.mult(1.5f);
     applyForce(sep);
   }
   
-  void link(Element e)
+  public void link(Element e)
   {
     linkedElements.add(e);
   }
   
-  void unlink(Element e)
+  public void unlink(Element e)
   {
     if (linkedElements.contains(e))
     {
@@ -387,13 +406,13 @@ class Element
     }
   }
   
-  void createChild()
+  public void createChild()
   {
-    childElements.add(new Child(location.x, location.y + 5, location.z, 10 * random(0.5, 2.5), this));
+    childElements.add(new Child(location.x, location.y + 5, location.z, 10 * random(0.5f, 2.5f), this));
     println("Child created");
   }
   
-  void update()
+  public void update()
   {
     velocity.add(acceleration);
     velocity.limit(maxspeed);
@@ -405,7 +424,7 @@ class Element
     acceleration.mult(0);
   }
   
-  void render()
+  public void render()
   {
     pushMatrix();
       stroke(neonColor, 2);
@@ -417,14 +436,14 @@ class Element
       }
       translate(location.x, location.y, location.z);
       sphereDetail(15);
-      if (int(random(0,4)) <= 2)
+      if (PApplet.parseInt(random(0,4)) <= 2)
         sphere(radius);
       else
-        box(radius*1.5);
+        box(radius*1.5f);
     popMatrix();
   }
   
-  PVector separate (ArrayList<Element> elements)
+  public PVector separate (ArrayList<Element> elements)
   {
     float desiredseparation = 35.0f;
     PVector steer = new PVector(0, 0, 0);
@@ -432,7 +451,7 @@ class Element
     // Pour chaque particule ...
     for (Element other : elements)
     {
-      // ... on vérifie 
+      // ... on v\u00e9rifie 
       float d = PVector.dist(location, other.location);
       // Si la distance est entre 0 et un montant arbitraire
       if ((d > 0) && (d < desiredseparation))
@@ -451,7 +470,7 @@ class Element
       steer.div((float)count);
     }
 
-    // Si le vecteur est supérieur à 0
+    // Si le vecteur est sup\u00e9rieur \u00e0 0
     if (steer.mag() > 0)
     {
       // First two lines of code below could be condensed with new PVector setMag() method
@@ -495,12 +514,12 @@ class Agent {
     step = _step; 
     thickness = _thickness; 
   } 
-  void run() { 
+  public void run() { 
     prevLoc = loc.get(); 
     // Velocity direction 
     //vel = PVector.random2D(); <-- this doesn't work in Processing.js! 
-    vel.x = random(-1.0,1.0); 
-    vel.y = random(-1.0,1.0); 
+    vel.x = random(-1.0f,1.0f); 
+    vel.y = random(-1.0f,1.0f); 
     // Velocity magnitude 
     vel.mult(step); 
     // Add velocity to Location 
@@ -508,13 +527,13 @@ class Agent {
     offScreen(); // boundary behaviour 
     display(); 
   } 
-  void display() {  
+  public void display() {  
     stroke(hue, 100, 100, alpha); 
     strokeWeight(thickness); 
     line(prevLoc.x, prevLoc.y, loc.x, loc.y); 
   } 
 
-  void offScreen() { 
+  public void offScreen() { 
     if (loc.x > width) {  
       loc.x = 0;  
       prevLoc.x = loc.x; 
@@ -538,7 +557,7 @@ class Agent {
     } 
   } 
 
-  void erase(int _hue) {  // method to set back location and hue of the bolt 
+  public void erase(int _hue) {  // method to set back location and hue of the bolt 
     loc.mult(0);  
     loc.x = width/2;  
     loc.y = height/2; 
@@ -555,14 +574,14 @@ class Cloud extends Agent {
     rad = _rad; 
 
   } 
-  void display()  { 
+  public void display()  { 
     noStroke();
     fill(hue, 0, 0, alpha); 
     ellipse(loc.x, loc.y, rad, rad); 
   } 
 } 
 
-void keyPressed() 
+public void keyPressed() 
 { 
    if (key == 'p') {
      run = !run;
@@ -593,7 +612,7 @@ void keyPressed()
   } // switch
 } 
 
-void keyReleased() {
+public void keyReleased() {
   switch(key) {
     case 'z':
       pressUp = false;
@@ -606,4 +625,14 @@ void keyReleased() {
     // !CODED:
     break;
   } // switch
+}
+  public void settings() {  size(1500, 800, P3D); }
+  static public void main(String[] passedArgs) {
+    String[] appletArgs = new String[] { "--present", "--window-color=#666666", "--stop-color=#cccccc", "quantic_dream_v066b" };
+    if (passedArgs != null) {
+      PApplet.main(concat(appletArgs, passedArgs));
+    } else {
+      PApplet.main(appletArgs);
+    }
+  }
 }
