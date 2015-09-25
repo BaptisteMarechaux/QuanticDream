@@ -522,6 +522,11 @@ void keyPressed()
      reset = !reset;
    } 
    
+   if (key == ' ')
+   {
+     saveFrame("capture_####.png");
+   }
+   
    switch(key) {
     case 'z':
       pressUp = true;
